@@ -28,3 +28,7 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project decisions
+
+- Keep each public hospital page in its own TanStack file route and share page content from `src/components/hospital-site.tsx`, so navigation and page metadata stay aligned.
