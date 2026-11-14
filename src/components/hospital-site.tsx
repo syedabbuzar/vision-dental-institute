@@ -1,12 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import { motion, useReducedMotion } from "motion/react";
 import {
-  ArrowDownRight, ArrowRight, ArrowUpRight, Clock3, Eye, HeartHandshake, MapPin,
-  Menu, Phone, ScanEye, ShieldCheck, Smile, Star, X,
+  ArrowDownRight, ArrowLeft, ArrowRight, ArrowUpRight, Clock3, Eye, HeartHandshake, MapPin,
+  Menu, Phone, ScanEye, ShieldCheck, Smile, Star, Trash2, Upload, X,
 } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import hospitalLogo from "@/assets/hendge-hospital-logo.png.asset.json";
 import eyeImage from "@/assets/hendge-eye.jpg";
 import dentalImage from "@/assets/hendge-dental.jpg";
 import operatingRoom from "@/assets/hospital/operating-room.webp.asset.json";
@@ -18,6 +19,8 @@ import {
   DENTAL_SERVICES, EYE_SERVICES, HOSPITAL_HOURS, HOSPITAL_LOCATION, HOSPITAL_MAP_URL,
   HOSPITAL_PHONE, HOSPITAL_PHONE_LINK, HOSPITAL_WHATSAPP_URL,
 } from "@/lib/hospital-info";
+import { addLocalGalleryPhoto, removeLocalGalleryPhoto } from "@/lib/local-gallery";
+import { useLocalHospitalGallery } from "@/hooks/use-local-hospital-gallery";
 
 const navItems = [
   ["Home", "/"], ["About", "/about"], ["Eye care", "/eye-care"],
@@ -25,12 +28,19 @@ const navItems = [
 ] as const;
 
 const waAppointment = `${HOSPITAL_WHATSAPP_URL}?text=${encodeURIComponent("Hello Hendge Hospital, I would like to enquire about an appointment.")}`;
+const originalGalleryPhotos = [
+  { src: operatingRoom.url, alt: "Eye care at Hendge Hospital" },
+  { src: eyeCareImage.url, alt: "Ophthalmology care at Hendge Hospital" },
+  { src: communityImage.url, alt: "Community event at Hendge Hospital" },
+  { src: careTeamImage.url, alt: "Care team at Hendge Hospital" },
+  { src: hospitalExterior.url, alt: "Hendge Hospital in Nanded" },
+];
 
 function Brand({ invert = false }: { invert?: boolean }) {
   return (
-    <Link to="/" className={`inline-flex items-center gap-3 ${invert ? "text-ice" : "text-deep-navy"}`} aria-label="Hendge Hospital home">
-      <span className="grid size-10 place-items-center bg-neon-teal text-deep-navy"><ScanEye size={23} strokeWidth={1.8} /></span>
-      <span className="leading-none"><span className="block text-[15px] font-bold tracking-[0.12em]">HENDGE</span><span className="mt-1 block text-[9px] font-semibold tracking-[0.25em] opacity-70">HOSPITAL</span></span>
+    <Link to="/" className={`inline-flex min-w-0 items-center gap-2.5 sm:gap-3 ${invert ? "text-ice" : "text-deep-navy"}`} aria-label="Hendge Hospital home">
+      <img src={hospitalLogo.url} alt="" width={52} height={52} className="size-11 shrink-0 object-contain sm:size-[52px]" />
+      <span className="min-w-0 leading-none"><span className="block text-[19px] font-bold sm:text-[22px]">Hendge</span><span className="mt-1.5 block text-[11px] font-semibold tracking-[0.14em] opacity-75 sm:text-xs">HOSPITAL</span></span>
     </Link>
   );
 }
@@ -39,7 +49,7 @@ export function SiteHeader({ dark = false }: { dark?: boolean }) {
   const [open, setOpen] = useState(false);
   return (
     <header className={`absolute inset-x-0 top-0 z-40 border-b ${dark ? "border-ice/10" : "border-deep-navy/10"}`}>
-      <div className="mx-auto flex h-[82px] max-w-[1440px] items-center justify-between px-5 sm:px-8 lg:px-14">
+      <div className="mx-auto flex h-[82px] max-w-[1440px] items-center justify-between gap-3 px-4 sm:h-[90px] sm:px-8 lg:px-14">
         <Brand invert={dark} />
         <nav className="hidden items-center gap-7 lg:flex" aria-label="Main navigation">
           {navItems.map(([label, href]) => <Link key={href} to={href} className={`text-[13px] font-medium transition-colors hover:text-neon-teal ${dark ? "text-ice/70" : "text-deep-navy/70"}`}>{label}</Link>)}
@@ -144,12 +154,11 @@ function TrustItem({ icon, title, detail }: { icon: React.ReactNode; title: stri
 }
 
 function GalleryStrip() {
-  const photos = [
-    { src: operatingRoom.url, alt: "Eye care at Hendge Hospital" },
-    { src: eyeCareImage.url, alt: "Ophthalmology care at Hendge Hospital" },
-    { src: careTeamImage.url, alt: "Care team at Hendge Hospital" },
-  ];
-  return <section className="bg-pure-white py-20 sm:py-28"><div className="mx-auto max-w-[1280px] px-5 sm:px-8 lg:px-12"><div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between"><SectionTitle kicker="Inside Hendge" title="Care, in practice." copy="A glimpse of the people and moments behind our care." /><Button asChild variant="outline" className="h-11 w-fit rounded-none border-deep-navy/20 bg-transparent px-5 text-deep-navy"><Link to="/gallery">View the gallery <ArrowRight size={15} /></Link></Button></div><div className="mt-10 grid gap-4 sm:grid-cols-3">{photos.map((photo, i) => <Reveal key={photo.src} delay={i * 0.08}><Link to="/gallery" className="group relative block aspect-[1.2/1] overflow-hidden bg-ice"><img src={photo.src} alt={photo.alt} loading="lazy" className="size-full object-cover transition-transform duration-700 group-hover:scale-105" /><span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-deep-navy/80 to-transparent p-5 pt-14 text-xs font-medium text-ice">Hendge Hospital · Nanded</span></Link></Reveal>)}</div></div></section>;
+  const localPhotos = useLocalHospitalGallery();
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const photos = [...localPhotos.map(({ src, alt }) => ({ src, alt })), ...originalGalleryPhotos];
+  const scrollCarousel = (direction: -1 | 1) => carouselRef.current?.scrollBy({ left: direction * (carouselRef.current.clientWidth * 0.82), behavior: "smooth" });
+  return <section className="bg-pure-white py-20 sm:py-28"><div className="mx-auto max-w-[1280px] px-5 sm:px-8 lg:px-12"><div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between"><SectionTitle kicker="Inside Hendge" title="Care, in practice." copy="A glimpse of the people and moments behind our care." /><div className="flex flex-wrap items-center gap-3"><div className="flex gap-2"><Button type="button" variant="outline" size="icon" aria-label="Previous gallery images" onClick={() => scrollCarousel(-1)} className="rounded-none border-deep-navy/20 bg-transparent text-deep-navy"><ArrowLeft size={16} /></Button><Button type="button" variant="outline" size="icon" aria-label="Next gallery images" onClick={() => scrollCarousel(1)} className="rounded-none border-deep-navy/20 bg-transparent text-deep-navy"><ArrowRight size={16} /></Button></div><Button asChild variant="outline" className="h-11 rounded-none border-deep-navy/20 bg-transparent px-5 text-deep-navy"><Link to="/gallery">View the gallery <ArrowRight size={15} /></Link></Button></div></div><div ref={carouselRef} className="mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-3 [scrollbar-width:thin]">{photos.map((photo, i) => <Reveal key={`${photo.src}-${i}`} delay={(i % 3) * 0.08} className="min-w-0 basis-[84%] shrink-0 snap-start sm:basis-[48%] lg:basis-[32%]"><Link to="/gallery" aria-label={`Open gallery: ${photo.alt}`} className="group relative block aspect-[1.2/1] overflow-hidden bg-ice"><img src={photo.src} alt={photo.alt} loading="lazy" className="size-full object-cover transition-transform duration-700 group-hover:scale-105" /><span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-deep-navy/80 to-transparent p-5 pt-14 text-xs font-medium text-ice">{photo.alt}</span></Link></Reveal>)}</div></div></section>;
 }
 
 function Reviews() {
@@ -194,14 +203,67 @@ export function DentalCarePage() {
 }
 
 export function GalleryPage() {
-  const photos = [
-    { src: operatingRoom.url, alt: "Eye care at Hendge Hospital" },
-    { src: eyeCareImage.url, alt: "Ophthalmology care at Hendge Hospital" },
-    { src: communityImage.url, alt: "Community event at Hendge Hospital" },
-    { src: careTeamImage.url, alt: "Care team at Hendge Hospital" },
-    { src: hospitalExterior.url, alt: "Hendge Hospital in Nanded" },
-  ];
-  return <SiteShell><PageHero kicker="Hospital gallery" title={<>A closer look at <span className="text-medical-blue/55">Hendge.</span></>} copy="Moments and images from the hospital and its work in the Nanded community." image={hospitalExterior.url} /><section className="bg-pure-white py-14 sm:py-20"><div className="mx-auto max-w-[1280px] px-5 sm:px-8 lg:px-12"><div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{photos.map((photo, i) => <Reveal key={photo.src} delay={(i % 3) * 0.07}><figure className="group relative aspect-[1.15/1] overflow-hidden bg-ice"><img src={photo.src} alt={photo.alt} loading="lazy" className="size-full object-cover transition-transform duration-700 group-hover:scale-105" /><figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-deep-navy/85 via-deep-navy/30 to-transparent px-5 pb-5 pt-14 text-xs font-medium text-ice">{photo.alt}</figcaption></figure></Reveal>)}</div><p className="mt-8 text-xs text-secondary-text">Images shared by Hendge Hospital.</p></div></section><AppointmentBand /></SiteShell>;
+  const localPhotos = useLocalHospitalGallery();
+  const photos = [...localPhotos.map(({ src, alt, id }) => ({ src, alt, key: id })), ...originalGalleryPhotos.map((photo, index) => ({ ...photo, key: `hospital-${index}` }))];
+  return <SiteShell><PageHero kicker="Hospital gallery" title={<>A closer look at <span className="text-medical-blue/55">Hendge.</span></>} copy="Moments and images from the hospital and its work in the Nanded community." image={hospitalExterior.url} /><section className="bg-pure-white py-14 sm:py-20"><div className="mx-auto max-w-[1280px] px-5 sm:px-8 lg:px-12"><div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{photos.map((photo, i) => <Reveal key={photo.key} delay={(i % 3) * 0.07}><figure className="group relative aspect-[1.15/1] overflow-hidden bg-ice"><img src={photo.src} alt={photo.alt} loading="lazy" className="size-full object-cover transition-transform duration-700 group-hover:scale-105" /><figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-deep-navy/85 via-deep-navy/30 to-transparent px-5 pb-5 pt-14 text-xs font-medium text-ice">{photo.alt}</figcaption></figure></Reveal>)}</div><p className="mt-8 text-xs text-secondary-text">Images shared by Hendge Hospital.</p></div></section><AppointmentBand /></SiteShell>;
+}
+
+export function GalleryManagerPage() {
+  const photos = useLocalHospitalGallery();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const [title, setTitle] = useState("");
+  const [altText, setAltText] = useState("");
+  const [message, setMessage] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!file) {
+      setMessage("Choose an image before saving.");
+      return;
+    }
+    if (!file.type.startsWith("image/")) {
+      setMessage("Choose a JPG, PNG, WebP or other image file.");
+      return;
+    }
+    if (file.size > 12 * 1024 * 1024) {
+      setMessage("Choose an image smaller than 12 MB.");
+      return;
+    }
+
+    setSaving(true);
+    setMessage("");
+    try {
+      await addLocalGalleryPhoto({
+        id: crypto.randomUUID(),
+        name: title.trim() || file.name.replace(/\.[^.]+$/, ""),
+        alt: altText.trim() || title.trim() || file.name.replace(/\.[^.]+$/, ""),
+        blob: file,
+        createdAt: Date.now(),
+      });
+      setFile(null);
+      setTitle("");
+      setAltText("");
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      setMessage("Image saved in this browser and added to the gallery.");
+    } catch {
+      setMessage("The image could not be saved. Check available browser storage and try again.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleRemove(id: string) {
+    try {
+      await removeLocalGalleryPhoto(id);
+      setMessage("Image removed from this browser’s gallery.");
+    } catch {
+      setMessage("The image could not be removed. Please try again.");
+    }
+  }
+
+  return <SiteShell><PageHero kicker="Gallery manager" title={<>Manage local <span className="text-medical-blue/55">gallery images.</span></>} copy="Add and remove images for this browser’s Hendge Hospital gallery." /><section className="bg-pure-white py-14 sm:py-20"><div className="mx-auto grid max-w-[1120px] gap-12 px-5 sm:px-8 lg:grid-cols-[0.8fr_1.2fr] lg:px-12"><div><Eyebrow>Browser gallery</Eyebrow><h2 className="font-display text-3xl text-deep-navy">Add an image</h2><p className="mt-4 text-sm leading-7 text-secondary-text">Gallery changes stay on this device and appear in the gallery page and homepage carousel. There is no account or secure administrator sign-in on this preview.</p><form onSubmit={handleSubmit} className="mt-7 grid gap-5"><label className="grid gap-2 text-xs font-semibold text-deep-navy" htmlFor="gallery-image">Image file<input ref={fileInputRef} id="gallery-image" type="file" accept="image/*" onChange={(event) => setFile(event.target.files?.[0] ?? null)} className="w-full border border-deep-navy/15 bg-pure-white p-3 text-sm font-normal text-deep-navy file:mr-3 file:border-0 file:bg-ice file:px-3 file:py-2 file:text-xs file:font-semibold file:text-medical-blue" /></label><label className="grid gap-2 text-xs font-semibold text-deep-navy" htmlFor="gallery-title">Image title <span className="font-normal text-secondary-text">(optional)</span><input id="gallery-title" value={title} onChange={(event) => setTitle(event.target.value)} maxLength={90} className="h-12 border border-deep-navy/15 bg-pure-white px-4 text-sm font-normal text-deep-navy focus-visible:outline-2 focus-visible:outline-neon-teal" /></label><label className="grid gap-2 text-xs font-semibold text-deep-navy" htmlFor="gallery-alt">Image description <span className="font-normal text-secondary-text">(optional)</span><input id="gallery-alt" value={altText} onChange={(event) => setAltText(event.target.value)} maxLength={140} className="h-12 border border-deep-navy/15 bg-pure-white px-4 text-sm font-normal text-deep-navy focus-visible:outline-2 focus-visible:outline-neon-teal" /></label><Button type="submit" disabled={saving} className="h-12 w-fit rounded-none bg-neon-teal px-6 font-semibold text-deep-navy"><Upload size={16} />{saving ? "Saving image…" : "Add to gallery"}</Button>{message && <p role="status" className="text-sm text-medical-blue">{message}</p>}</form></div><div><div className="flex items-end justify-between gap-4"><div><Eyebrow>Saved on this device</Eyebrow><h2 className="font-display text-3xl text-deep-navy">Your images <span className="font-sans text-lg text-secondary-text">({photos.length})</span></h2></div></div>{photos.length === 0 ? <p className="mt-6 border-t border-deep-navy/10 py-5 text-sm text-secondary-text">No local images yet.</p> : <ul className="mt-6 grid gap-4 sm:grid-cols-2">{photos.map((photo) => <li key={photo.id} className="border border-deep-navy/10"><img src={photo.src} alt={photo.alt} className="aspect-[1.3/1] w-full object-cover" /><div className="flex items-center justify-between gap-3 p-3"><span className="min-w-0 truncate text-sm font-medium text-deep-navy">{photo.name}</span><Button type="button" variant="outline" size="icon" aria-label={`Remove ${photo.name}`} onClick={() => void handleRemove(photo.id)} className="shrink-0 rounded-none border-deep-navy/20 text-deep-navy"><Trash2 size={15} /></Button></div></li>)}</ul>}</div></div></section><AppointmentBand /></SiteShell>;
 }
 
 export function ContactPage() {
@@ -216,5 +278,5 @@ export function ContactPage() {
   }
   return <SiteShell><PageHero kicker="Contact Hendge Hospital" title={<>We’re here to <span className="text-medical-blue/55">listen.</span></>} copy="For appointment enquiries, directions or service availability, reach out to our team." /><section className="bg-pure-white py-14 sm:py-20"><div className="mx-auto grid max-w-[1200px] gap-12 px-5 sm:px-8 lg:grid-cols-[0.8fr_1.2fr] lg:px-12"><div><Eyebrow>Visit or get in touch</Eyebrow><h2 className="font-display text-3xl text-deep-navy">A conversation is a good place to start.</h2><a href={`tel:${HOSPITAL_PHONE_LINK}`} className="mt-8 flex items-center gap-4 border-t border-deep-navy/10 py-5"><span className="grid size-11 place-items-center bg-ice text-medical-blue"><Phone size={19} /></span><span><span className="block text-xs text-secondary-text">Call us</span><span className="mt-1 block text-sm font-semibold text-deep-navy">{HOSPITAL_PHONE}</span></span></a><div className="flex items-center gap-4 border-t border-deep-navy/10 py-5"><span className="grid size-11 place-items-center bg-ice text-medical-blue"><Clock3 size={19} /></span><span><span className="block text-xs text-secondary-text">Business hours</span><span className="mt-1 block text-sm font-semibold text-deep-navy">{HOSPITAL_HOURS}</span><span className="mt-1 block text-xs text-secondary-text">Sunday: hours not listed</span></span></div><div className="flex items-center gap-4 border-y border-deep-navy/10 py-5"><span className="grid size-11 place-items-center bg-ice text-medical-blue"><MapPin size={19} /></span><span><span className="block text-xs text-secondary-text">Find us</span><span className="mt-1 block text-sm font-semibold text-deep-navy">{HOSPITAL_LOCATION}</span></span></div><Button asChild variant="outline" className="mt-5 h-11 rounded-none border-deep-navy/20 bg-transparent text-deep-navy"><a href={HOSPITAL_MAP_URL} target="_blank" rel="noreferrer">Open directions <ArrowUpRight size={15} /></a></Button></div>
     <div className="bg-ice p-6 sm:p-9"><p className="text-xs font-semibold uppercase tracking-[0.17em] text-medical-blue">Appointment enquiry</p><h2 className="mt-3 font-display text-3xl text-deep-navy">How can we help?</h2><p className="mt-3 text-sm leading-6 text-secondary-text">Share a little about what you need and continue in WhatsApp.</p><form className="mt-7 grid gap-5" onSubmit={handleSubmit}><label className="grid gap-2 text-xs font-semibold text-deep-navy" htmlFor="care-service">I’m enquiring about<select id="care-service" value={service} onChange={(event) => setService(event.target.value)} className="h-12 border border-deep-navy/15 bg-pure-white px-4 text-sm font-normal text-deep-navy focus-visible:outline-2 focus-visible:outline-neon-teal"><option>Eye care</option><option>Dental care</option><option>General enquiry</option></select></label><label className="grid gap-2 text-xs font-semibold text-deep-navy" htmlFor="enquiry-message">Message <span className="font-normal text-secondary-text">(optional)</span><textarea id="enquiry-message" value={message} onChange={(event) => setMessage(event.target.value)} rows={4} placeholder="Tell us how we can help" className="resize-y border border-deep-navy/15 bg-pure-white p-4 text-sm font-normal text-deep-navy placeholder:text-secondary-text focus-visible:outline-2 focus-visible:outline-neon-teal" /></label><Button type="submit" className="h-12 w-fit rounded-none bg-neon-teal px-6 font-semibold text-deep-navy hover:bg-neon-teal/85">Continue in WhatsApp <ArrowUpRight size={16} /></Button>{submitted && <p role="status" className="text-xs text-medical-blue">Your enquiry is ready in WhatsApp. Please send it there to reach the hospital.</p>}</form></div>
-  </div></section><section className="bg-ice px-5 py-12 sm:px-8"><div className="mx-auto flex max-w-[1200px] flex-col gap-4 sm:flex-row sm:items-center sm:justify-between lg:px-12"><div><Eyebrow>Find us in Nanded</Eyebrow><p className="text-sm text-secondary-text">Hendge Hospital · {HOSPITAL_LOCATION}</p></div><a href={HOSPITAL_MAP_URL} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-sm font-semibold text-medical-blue">View on Google Maps <ArrowUpRight size={15} /></a></div></section></SiteShell>;
+  </div></section><section className="bg-ice px-5 py-12 sm:px-8"><div className="mx-auto max-w-[1200px] lg:px-12"><div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><div><Eyebrow>Find us in Nanded</Eyebrow><p className="text-sm text-secondary-text">Hendge Hospital · {HOSPITAL_LOCATION}</p></div><a href={HOSPITAL_MAP_URL} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-sm font-semibold text-medical-blue">View on Google Maps <ArrowUpRight size={15} /></a></div><div className="mt-6 overflow-hidden border border-deep-navy/10 bg-pure-white"><iframe title="Google Map showing Hendge Hospital in Nanded" src="https://www.google.com/maps?q=19.1638381,77.3174737&output=embed" width="100%" height="420" loading="lazy" referrerPolicy="no-referrer-when-downgrade" className="block h-[320px] w-full sm:h-[420px]" /></div></div></section></SiteShell>;
 }

@@ -32,3 +32,4 @@ use the editor.
 ## Project decisions
 
 - Keep each public hospital page in its own TanStack file route and share page content from `src/components/hospital-site.tsx`, so navigation and page metadata stay aligned.
+- Keep gallery additions explicitly browser-local and never embed an administrator password in client code; browser-only storage has no authentication boundary.
