@@ -10,7 +10,7 @@ describe("App routing", () => {
   it("matches the home page and each hospital information page", () => {
     const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
 
-    for (const path of ["/", "/about", "/eye-care", "/dental-care", "/gallery", "/contact"]) {
+    for (const path of ["/", "/about", "/eye-care", "/dental-care", "/gallery", "/contact", "/admin"]) {
       const matches = router.matchRoutes(path);
       expect(matches.at(-1)?.routeId, `expected ${path} to match a content page`).not.toBe(rootRouteId);
     }

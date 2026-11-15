@@ -73,7 +73,7 @@ export function SiteFooter() {
   return <footer className="bg-deep-navy text-ice">
     <div className="mx-auto grid max-w-[1280px] gap-12 px-5 py-14 sm:px-8 md:grid-cols-[1.4fr_1fr_1fr] lg:px-12 lg:py-20">
       <div><Brand invert /><p className="mt-6 max-w-sm text-sm leading-7 text-ice/60">Thoughtful eye and dental care, rooted in Nanded and centered on your well-being.</p><a className="mt-6 inline-flex items-center gap-2 text-sm text-neon-teal" href={waAppointment} target="_blank" rel="noreferrer">Enquire about an appointment <ArrowUpRight size={15} /></a></div>
-      <div><p className="text-xs font-semibold uppercase tracking-[0.18em] text-ice/45">Explore</p><div className="mt-5 grid grid-cols-2 gap-x-8 gap-y-3">{navItems.slice(1).map(([label, href]) => <Link key={href} to={href} className="text-sm text-ice/75 transition-colors hover:text-neon-teal">{label}</Link>)}</div></div>
+      <div><p className="text-xs font-semibold uppercase tracking-[0.18em] text-ice/45">Explore</p><div className="mt-5 grid grid-cols-2 gap-x-8 gap-y-3">{navItems.slice(1).map(([label, href]) => <Link key={href} to={href} className="text-sm text-ice/75 transition-colors hover:text-neon-teal">{label}</Link>)}<Link to="/admin" className="text-sm text-ice/75 transition-colors hover:text-neon-teal">Local gallery manager</Link></div></div>
       <div><p className="text-xs font-semibold uppercase tracking-[0.18em] text-ice/45">Visit or call</p><a href={`tel:${HOSPITAL_PHONE_LINK}`} className="mt-5 flex items-center gap-3 text-sm text-ice/80"><Phone size={16} className="text-neon-teal" />{HOSPITAL_PHONE}</a><p className="mt-4 flex items-start gap-3 text-sm leading-6 text-ice/70"><MapPin size={16} className="mt-1 shrink-0 text-neon-teal" />{HOSPITAL_LOCATION}</p><p className="mt-4 flex items-center gap-3 text-sm text-ice/70"><Clock3 size={16} className="text-neon-teal" />{HOSPITAL_HOURS}</p></div>
     </div>
     <div className="border-t border-ice/10"><div className="mx-auto flex max-w-[1280px] flex-col gap-2 px-5 py-5 text-xs text-ice/40 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-12"><span>© {new Date().getFullYear()} Hendge Hospital</span><span>Eye care · Dental care · Nanded</span></div></div>
@@ -219,15 +219,16 @@ export function GalleryManagerPage() {
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!file) {
+    const selectedFile = new FormData(event.currentTarget).get("gallery-image");
+    if (!(selectedFile instanceof File) || selectedFile.size === 0) {
       setMessage("Choose an image before saving.");
       return;
     }
-    if (!file.type.startsWith("image/")) {
+    if (!selectedFile.type.startsWith("image/")) {
       setMessage("Choose a JPG, PNG, WebP or other image file.");
       return;
     }
-    if (file.size > 12 * 1024 * 1024) {
+    if (selectedFile.size > 12 * 1024 * 1024) {
       setMessage("Choose an image smaller than 12 MB.");
       return;
     }
@@ -237,9 +238,9 @@ export function GalleryManagerPage() {
     try {
       await addLocalGalleryPhoto({
         id: crypto.randomUUID(),
-        name: title.trim() || file.name.replace(/\.[^.]+$/, ""),
-        alt: altText.trim() || title.trim() || file.name.replace(/\.[^.]+$/, ""),
-        blob: file,
+        name: title.trim() || selectedFile.name.replace(/\.[^.]+$/, ""),
+        alt: altText.trim() || title.trim() || selectedFile.name.replace(/\.[^.]+$/, ""),
+        blob: selectedFile,
         createdAt: Date.now(),
       });
       setFile(null);
@@ -263,7 +264,72 @@ export function GalleryManagerPage() {
     }
   }
 
-  return <SiteShell><PageHero kicker="Gallery manager" title={<>Manage local <span className="text-medical-blue/55">gallery images.</span></>} copy="Add and remove images for this browser’s Hendge Hospital gallery." /><section className="bg-pure-white py-14 sm:py-20"><div className="mx-auto grid max-w-[1120px] gap-12 px-5 sm:px-8 lg:grid-cols-[0.8fr_1.2fr] lg:px-12"><div><Eyebrow>Browser gallery</Eyebrow><h2 className="font-display text-3xl text-deep-navy">Add an image</h2><p className="mt-4 text-sm leading-7 text-secondary-text">Gallery changes stay on this device and appear in the gallery page and homepage carousel. There is no account or secure administrator sign-in on this preview.</p><form onSubmit={handleSubmit} className="mt-7 grid gap-5"><label className="grid gap-2 text-xs font-semibold text-deep-navy" htmlFor="gallery-image">Image file<input ref={fileInputRef} id="gallery-image" type="file" accept="image/*" onChange={(event) => setFile(event.target.files?.[0] ?? null)} className="w-full border border-deep-navy/15 bg-pure-white p-3 text-sm font-normal text-deep-navy file:mr-3 file:border-0 file:bg-ice file:px-3 file:py-2 file:text-xs file:font-semibold file:text-medical-blue" /></label><label className="grid gap-2 text-xs font-semibold text-deep-navy" htmlFor="gallery-title">Image title <span className="font-normal text-secondary-text">(optional)</span><input id="gallery-title" value={title} onChange={(event) => setTitle(event.target.value)} maxLength={90} className="h-12 border border-deep-navy/15 bg-pure-white px-4 text-sm font-normal text-deep-navy focus-visible:outline-2 focus-visible:outline-neon-teal" /></label><label className="grid gap-2 text-xs font-semibold text-deep-navy" htmlFor="gallery-alt">Image description <span className="font-normal text-secondary-text">(optional)</span><input id="gallery-alt" value={altText} onChange={(event) => setAltText(event.target.value)} maxLength={140} className="h-12 border border-deep-navy/15 bg-pure-white px-4 text-sm font-normal text-deep-navy focus-visible:outline-2 focus-visible:outline-neon-teal" /></label><Button type="submit" disabled={saving} className="h-12 w-fit rounded-none bg-neon-teal px-6 font-semibold text-deep-navy"><Upload size={16} />{saving ? "Saving image…" : "Add to gallery"}</Button>{message && <p role="status" className="text-sm text-medical-blue">{message}</p>}</form></div><div><div className="flex items-end justify-between gap-4"><div><Eyebrow>Saved on this device</Eyebrow><h2 className="font-display text-3xl text-deep-navy">Your images <span className="font-sans text-lg text-secondary-text">({photos.length})</span></h2></div></div>{photos.length === 0 ? <p className="mt-6 border-t border-deep-navy/10 py-5 text-sm text-secondary-text">No local images yet.</p> : <ul className="mt-6 grid gap-4 sm:grid-cols-2">{photos.map((photo) => <li key={photo.id} className="border border-deep-navy/10"><img src={photo.src} alt={photo.alt} className="aspect-[1.3/1] w-full object-cover" /><div className="flex items-center justify-between gap-3 p-3"><span className="min-w-0 truncate text-sm font-medium text-deep-navy">{photo.name}</span><Button type="button" variant="outline" size="icon" aria-label={`Remove ${photo.name}`} onClick={() => void handleRemove(photo.id)} className="shrink-0 rounded-none border-deep-navy/20 text-deep-navy"><Trash2 size={15} /></Button></div></li>)}</ul>}</div></div></section><AppointmentBand /></SiteShell>;
+  return <SiteShell>
+    <PageHero
+      kicker="Gallery manager"
+      title={<>Manage local <span className="text-medical-blue/55">gallery images.</span></>}
+      copy="Add and remove images for this browser’s Hendge Hospital gallery."
+    />
+    <section className="bg-pure-white py-14 sm:py-20">
+      <div className="mx-auto grid max-w-[1120px] gap-12 px-5 sm:px-8 lg:grid-cols-[0.8fr_1.2fr] lg:px-12">
+        <div>
+          <Eyebrow>Browser gallery</Eyebrow>
+          <h2 className="font-display text-3xl text-deep-navy">Add an image</h2>
+          <p className="mt-4 text-sm leading-7 text-secondary-text">
+            Gallery changes stay on this device and appear in the gallery page and homepage carousel. There is no account or secure administrator sign-in on this preview.
+          </p>
+          <form onSubmit={handleSubmit} className="mt-7 grid gap-5">
+            <label className="grid gap-2 text-xs font-semibold text-deep-navy" htmlFor="gallery-image">
+              Image file
+              <input
+                ref={fileInputRef}
+                id="gallery-image"
+                name="gallery-image"
+                type="file"
+                accept="image/*"
+                onChange={(event) => setFile(event.target.files?.[0] ?? null)}
+                className="w-full border border-deep-navy/15 bg-pure-white p-3 text-sm font-normal text-deep-navy file:mr-3 file:border-0 file:bg-ice file:px-3 file:py-2 file:text-xs file:font-semibold file:text-medical-blue"
+              />
+            </label>
+            <label className="grid gap-2 text-xs font-semibold text-deep-navy" htmlFor="gallery-title">
+              Image title <span className="font-normal text-secondary-text">(optional)</span>
+              <input id="gallery-title" value={title} onChange={(event) => setTitle(event.target.value)} maxLength={90} className="h-12 border border-deep-navy/15 bg-pure-white px-4 text-sm font-normal text-deep-navy focus-visible:outline-2 focus-visible:outline-neon-teal" />
+            </label>
+            <label className="grid gap-2 text-xs font-semibold text-deep-navy" htmlFor="gallery-alt">
+              Image description <span className="font-normal text-secondary-text">(optional)</span>
+              <input id="gallery-alt" value={altText} onChange={(event) => setAltText(event.target.value)} maxLength={140} className="h-12 border border-deep-navy/15 bg-pure-white px-4 text-sm font-normal text-deep-navy focus-visible:outline-2 focus-visible:outline-neon-teal" />
+            </label>
+            <Button type="submit" disabled={saving} className="h-12 w-fit rounded-none bg-neon-teal px-6 font-semibold text-deep-navy">
+              <Upload size={16} />{saving ? "Saving image…" : "Add to gallery"}
+            </Button>
+            {message && <p role="status" className="text-sm text-medical-blue">{message}</p>}
+          </form>
+        </div>
+        <div>
+          <Eyebrow>Saved on this device</Eyebrow>
+          <h2 className="font-display text-3xl text-deep-navy">Your images <span className="font-sans text-lg text-secondary-text">({photos.length})</span></h2>
+          {photos.length === 0 ? (
+            <p className="mt-6 border-t border-deep-navy/10 py-5 text-sm text-secondary-text">No local images yet.</p>
+          ) : (
+            <ul className="mt-6 grid gap-4 sm:grid-cols-2">
+              {photos.map((photo) => (
+                <li key={photo.id} className="border border-deep-navy/10">
+                  <img src={photo.src} alt={photo.alt} className="aspect-[1.3/1] w-full object-cover" />
+                  <div className="flex items-center justify-between gap-3 p-3">
+                    <span className="min-w-0 truncate text-sm font-medium text-deep-navy">{photo.name}</span>
+                    <Button type="button" variant="outline" size="icon" aria-label={`Remove ${photo.name}`} onClick={() => void handleRemove(photo.id)} className="shrink-0 rounded-none border-deep-navy/20 text-deep-navy">
+                      <Trash2 size={15} />
+                    </Button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+    </section>
+    <AppointmentBand />
+  </SiteShell>;
 }
 
 export function ContactPage() {
