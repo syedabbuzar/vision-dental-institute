@@ -175,7 +175,7 @@ function AppointmentBand() {
 }
 
 export function HomePage() {
-  return <SiteShell darkHeader><Hero /><TrustBand /><CarePillars /><HomeAbout /><HomeServices /><GalleryStrip /><Reviews /><AppointmentBand /></SiteShell>;
+  return <SiteShell darkHeader><Hero /><TrustBand /><GalleryStrip /><CarePillars /><HomeAbout /><HomeServices /><Reviews /><AppointmentBand /></SiteShell>;
 }
 
 function HomeAbout() {
