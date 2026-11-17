@@ -201,6 +201,11 @@
 .scan-rotate { animation: scanner-rotate 38s linear infinite; }
 .marker-pulse { animation: marker-pulse 3s ease-in-out infinite; }
 
+.service-card { transform: perspective(900px) translateZ(0); }
+.service-card:hover { transform: perspective(900px) translateY(-3px) rotateX(1deg); }
+.service-feature { transform-style: preserve-3d; transform-origin: center; }
+.service-feature-image { transform: translateZ(0); }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     scroll-behavior: auto !important;
