@@ -7,3 +7,5 @@
 - [x] Make the home gallery strip a responsive, clickable carousel driven by gallery photos and local browser additions, positioned directly before the care introduction.
 - [x] Add a browser-only gallery manager without embedding the requested password, and add the supplied Google Map to Contact.
 - [x] Verify the updated homepage and Contact map at mobile/desktop sizes; run routing tests and check preview logs.
+- [ ] Refine motion across the existing site: cinematic hero/image reveals, scroll reveals, subtle depth/parallax, service-card and button micro-interactions, with reduced-motion support.
+- [ ] Verify the animation update on desktop and mobile without changing existing content or layout.
