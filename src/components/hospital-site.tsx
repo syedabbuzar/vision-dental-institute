@@ -7,17 +7,17 @@ import {
 import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import hospitalLogo from "@/assets/hendge-hospital-logo.png.asset.json";
+import hospitalLogo from "@/assets/hendge-hospital-logo.png";
 import eyeImage from "@/assets/hendge-eye.jpg";
 import dentalImage from "@/assets/hendge-dental.jpg";
 import eyeExamImage from "@/assets/services/eye-exam-machine.jpg";
 import cataractServiceImage from "@/assets/services/cataract-care.jpg";
 import dentalServiceImage from "@/assets/services/dental-care.jpg";
-import operatingRoom from "@/assets/hospital/operating-room.webp.asset.json";
-import eyeCareImage from "@/assets/hospital/eye-care.webp.asset.json";
-import careTeamImage from "@/assets/hospital/care-team.webp.asset.json";
-import hospitalExterior from "@/assets/hospital/hospital-exterior.webp.asset.json";
-import communityImage from "@/assets/hospital/community.webp.asset.json";
+import operatingRoom from "@/assets/hospital/operating-room.webp";
+import eyeCareImage from "@/assets/hospital/eye-care.webp";
+import careTeamImage from "@/assets/hospital/care-team.webp";
+import hospitalExterior from "@/assets/hospital/hospital-exterior.webp";
+import communityImage from "@/assets/hospital/community.webp";
 import {
   DENTAL_SERVICES, EYE_SERVICES, HOSPITAL_HOURS, HOSPITAL_LOCATION, HOSPITAL_MAP_URL,
   HOSPITAL_PHONE, HOSPITAL_PHONE_LINK, HOSPITAL_WHATSAPP_URL,
@@ -32,11 +32,11 @@ const navItems = [
 
 const waAppointment = `${HOSPITAL_WHATSAPP_URL}?text=${encodeURIComponent("Hello Hendge Hospital, I would like to enquire about an appointment.")}`;
 const originalGalleryPhotos = [
-  { src: operatingRoom.url, alt: "Eye care at Hendge Hospital" },
-  { src: eyeCareImage.url, alt: "Ophthalmology care at Hendge Hospital" },
-  { src: communityImage.url, alt: "Community event at Hendge Hospital" },
-  { src: careTeamImage.url, alt: "Care team at Hendge Hospital" },
-  { src: hospitalExterior.url, alt: "Hendge Hospital in Nanded" },
+  { src: operatingRoom, alt: "Eye care at Hendge Hospital" },
+  { src: eyeCareImage, alt: "Ophthalmology care at Hendge Hospital" },
+  { src: communityImage, alt: "Community event at Hendge Hospital" },
+  { src: careTeamImage, alt: "Care team at Hendge Hospital" },
+  { src: hospitalExterior, alt: "Hendge Hospital in Nanded" },
 ];
 const serviceDescriptions: Record<string, string> = {
   "Cataract Care": "Assessment and care for cataracts and changing vision.",
@@ -87,7 +87,7 @@ const featuredServices = [
 function Brand({ invert = false }: { invert?: boolean }) {
   return (
     <Link to="/" className={`inline-flex min-w-0 items-center gap-2.5 sm:gap-3 ${invert ? "text-ice" : "text-deep-navy"}`} aria-label="Hendge Hospital home">
-      <img src={hospitalLogo.url} alt="Hendge Hospital logo" width={52} height={52} className="size-11 shrink-0 object-contain sm:size-[52px]" />
+      <img src={hospitalLogo} alt="Hendge Hospital logo" width={52} height={52} className="size-11 shrink-0 object-contain sm:size-[52px]" />
       <span className="min-w-0 leading-none"><span className="block text-[19px] font-bold sm:text-[22px]">Hendge</span><span className="mt-1.5 block text-[11px] font-semibold tracking-[0.14em] opacity-75 sm:text-xs">HOSPITAL</span></span>
     </Link>
   );
@@ -255,11 +255,11 @@ export function HomePage() {
 export function ServicesPage() {
   const opticalAndCheckups = ["Eye Exams", "Lens And Contact Prescriptions", "Refraction"];
   const eyeServices = EYE_SERVICES.filter((service) => !opticalAndCheckups.includes(service));
-  return <SiteShell><PageHero kicker="Our services" title={<>Care for your <span className="text-medical-blue/55">whole self.</span></>} copy="Explore eye care, dental services, optical support and checkups available at Hendge Hospital in Nanded." image={careTeamImage.url} imageAlt="Doctors and staff at Hendge Hospital in Nanded" /><section className="bg-ice py-14 sm:py-20"><div className="mx-auto max-w-[1280px] px-5 sm:px-8 lg:px-12"><Reveal><SectionTitle kicker="Care at a glance" title="Services for clearer days." copy="A look at the eye and dental care available at Hendge Hospital." /></Reveal><FeaturedServiceCards /></div></section><section className="bg-pure-white py-14 sm:py-20"><div className="mx-auto grid max-w-[1280px] gap-12 px-5 sm:px-8 lg:px-12"><Reveal><div><div className="mb-3 flex items-center gap-3 text-sm font-semibold text-deep-navy"><Eye size={18} className="text-medical-blue" /> Eye care</div><p className="mb-5 text-sm text-secondary-text">Eye care and ophthalmology services</p><ServiceCardGrid services={eyeServices} /></div></Reveal><Reveal><div><div className="mb-3 flex items-center gap-3 text-sm font-semibold text-deep-navy"><ScanEye size={18} className="text-medical-blue" /> Optical &amp; checkups</div><p className="mb-5 text-sm text-secondary-text">Vision tests, prescriptions and checkups</p><ServiceCardGrid services={opticalAndCheckups} /></div></Reveal><Reveal><div><div className="mb-3 flex items-center gap-3 text-sm font-semibold text-deep-navy"><Smile size={18} className="text-medical-blue" /> Dental care</div><p className="mb-5 text-sm text-secondary-text">Comprehensive oral health services</p><ServiceCardGrid services={DENTAL_SERVICES} /></div></Reveal></div></section><AppointmentBand /></SiteShell>;
+  return <SiteShell><PageHero kicker="Our services" title={<>Care for your <span className="text-medical-blue/55">whole self.</span></>} copy="Explore eye care, dental services, optical support and checkups available at Hendge Hospital in Nanded." image={careTeamImage} imageAlt="Doctors and staff at Hendge Hospital in Nanded" /><section className="bg-ice py-14 sm:py-20"><div className="mx-auto max-w-[1280px] px-5 sm:px-8 lg:px-12"><Reveal><SectionTitle kicker="Care at a glance" title="Services for clearer days." copy="A look at the eye and dental care available at Hendge Hospital." /></Reveal><FeaturedServiceCards /></div></section><section className="bg-pure-white py-14 sm:py-20"><div className="mx-auto grid max-w-[1280px] gap-12 px-5 sm:px-8 lg:px-12"><Reveal><div><div className="mb-3 flex items-center gap-3 text-sm font-semibold text-deep-navy"><Eye size={18} className="text-medical-blue" /> Eye care</div><p className="mb-5 text-sm text-secondary-text">Eye care and ophthalmology services</p><ServiceCardGrid services={eyeServices} /></div></Reveal><Reveal><div><div className="mb-3 flex items-center gap-3 text-sm font-semibold text-deep-navy"><ScanEye size={18} className="text-medical-blue" /> Optical &amp; checkups</div><p className="mb-5 text-sm text-secondary-text">Vision tests, prescriptions and checkups</p><ServiceCardGrid services={opticalAndCheckups} /></div></Reveal><Reveal><div><div className="mb-3 flex items-center gap-3 text-sm font-semibold text-deep-navy"><Smile size={18} className="text-medical-blue" /> Dental care</div><p className="mb-5 text-sm text-secondary-text">Comprehensive oral health services</p><ServiceCardGrid services={DENTAL_SERVICES} /></div></Reveal></div></section><AppointmentBand /></SiteShell>;
 }
 
 function HomeAbout() {
-  return <section className="bg-pure-white py-20 sm:py-28"><div className="mx-auto grid max-w-[1280px] items-center gap-10 px-5 sm:px-8 lg:grid-cols-[1fr_1fr] lg:gap-16 lg:px-12"><Reveal><div className="relative"><img src={eyeCareImage.url} alt="Eye care at Hendge Hospital" loading="lazy" className="aspect-[1.12/1] w-full object-cover" /><span className="absolute bottom-5 left-5 bg-neon-teal px-4 py-3 text-xs font-semibold text-deep-navy">Serving Nanded since 2020</span></div></Reveal><Reveal><SectionTitle kicker="About Hendge Hospital" title={<>Care that feels <span className="text-medical-blue/55">personal.</span></>} copy="Since opening in 2020, Hendge Hospital has been dedicated to eye and dental care that puts patient well-being first. Our doctors, surgeons and staff bring a personalized approach to routine check-ups and advanced treatments alike." /><p className="mt-5 text-sm leading-7 text-secondary-text">With an in-house eye operation theatre and a commitment to serving our community, we combine attentive care with a focus on comfort and trust.</p><Link to="/about" className="mt-7 inline-flex items-center gap-3 text-sm font-semibold text-medical-blue">Get to know us <ArrowRight size={16} /></Link></Reveal></div></section>;
+  return <section className="bg-pure-white py-20 sm:py-28"><div className="mx-auto grid max-w-[1280px] items-center gap-10 px-5 sm:px-8 lg:grid-cols-[1fr_1fr] lg:gap-16 lg:px-12"><Reveal><div className="relative"><img src={eyeCareImage} alt="Eye care at Hendge Hospital" loading="lazy" className="aspect-[1.12/1] w-full object-cover" /><span className="absolute bottom-5 left-5 bg-neon-teal px-4 py-3 text-xs font-semibold text-deep-navy">Serving Nanded since 2020</span></div></Reveal><Reveal><SectionTitle kicker="About Hendge Hospital" title={<>Care that feels <span className="text-medical-blue/55">personal.</span></>} copy="Since opening in 2020, Hendge Hospital has been dedicated to eye and dental care that puts patient well-being first. Our doctors, surgeons and staff bring a personalized approach to routine check-ups and advanced treatments alike." /><p className="mt-5 text-sm leading-7 text-secondary-text">With an in-house eye operation theatre and a commitment to serving our community, we combine attentive care with a focus on comfort and trust.</p><Link to="/about" className="mt-7 inline-flex items-center gap-3 text-sm font-semibold text-medical-blue">Get to know us <ArrowRight size={16} /></Link></Reveal></div></section>;
 }
 
 function HomeServices() {
@@ -274,7 +274,7 @@ function FeaturedServiceCards() {
       initial={reducedMotion ? false : { y: 28, rotateX: 2 }}
       whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
       viewport={{ once: true, amount: 0.18 }}
-      whileHover={reducedMotion ? undefined : { y: -7, rotateX: 1, rotateY: index === 1 ? 0 : index === 0 ? -1 : 1, scale: 1.01 }}
+      {...(!reducedMotion ? { whileHover: { y: -7, rotateX: 1, rotateY: index === 1 ? 0 : index === 0 ? -1 : 1, scale: 1.01 } } : {})}
       transition={{ duration: 0.65, delay: reducedMotion ? 0 : index * 0.1, ease: [0.22, 1, 0.36, 1] }}
       className="service-feature group overflow-hidden rounded-lg bg-pure-white shadow-[0_12px_36px_-24px_rgba(9,42,55,0.6)]"
     >
@@ -301,11 +301,11 @@ export function PageHero({ kicker, title, copy, dark = false, image, imageAlt = 
 }
 
 export function AboutPage() {
-  return <SiteShell><PageHero kicker="About Hendge Hospital" title={<>Thoughtful care. <span className="text-medical-blue/55">Closer to home.</span></>} copy="Since opening in 2020, Hendge Hospital has been dedicated to eye and dental care that prioritizes patient well-being and satisfaction." image={careTeamImage.url} imageAlt="Doctors and staff at Hendge Hospital" /><section className="bg-pure-white py-16 sm:py-24"><div className="mx-auto grid max-w-[1100px] gap-10 px-5 sm:px-8 md:grid-cols-[0.7fr_1.3fr] lg:px-12"><Reveal><div className="text-xs font-semibold uppercase tracking-[0.17em] text-medical-blue">Our commitment</div></Reveal><Reveal><h2 className="font-display text-3xl leading-tight text-deep-navy sm:text-4xl">A hospital built around people, not just appointments.</h2><p className="mt-6 text-sm leading-7 text-secondary-text">Our experienced team of doctors, surgeons and staff offers comprehensive, personalized care—from routine check-ups to advanced treatments. We are especially committed to serving elderly patients and supporting our Nanded community.</p><p className="mt-4 text-sm leading-7 text-secondary-text">Hendge Hospital also has an in-house eye operation theatre, bringing dedicated ophthalmic care together under one roof.</p></Reveal></div></section><TrustBand /><AppointmentBand /></SiteShell>;
+  return <SiteShell><PageHero kicker="About Hendge Hospital" title={<>Thoughtful care. <span className="text-medical-blue/55">Closer to home.</span></>} copy="Since opening in 2020, Hendge Hospital has been dedicated to eye and dental care that prioritizes patient well-being and satisfaction." image={careTeamImage} imageAlt="Doctors and staff at Hendge Hospital" /><section className="bg-pure-white py-16 sm:py-24"><div className="mx-auto grid max-w-[1100px] gap-10 px-5 sm:px-8 md:grid-cols-[0.7fr_1.3fr] lg:px-12"><Reveal><div className="text-xs font-semibold uppercase tracking-[0.17em] text-medical-blue">Our commitment</div></Reveal><Reveal><h2 className="font-display text-3xl leading-tight text-deep-navy sm:text-4xl">A hospital built around people, not just appointments.</h2><p className="mt-6 text-sm leading-7 text-secondary-text">Our experienced team of doctors, surgeons and staff offers comprehensive, personalized care—from routine check-ups to advanced treatments. We are especially committed to serving elderly patients and supporting our Nanded community.</p><p className="mt-4 text-sm leading-7 text-secondary-text">Hendge Hospital also has an in-house eye operation theatre, bringing dedicated ophthalmic care together under one roof.</p></Reveal></div></section><TrustBand /><AppointmentBand /></SiteShell>;
 }
 
 export function EyeCarePage() {
-  return <SiteShell darkHeader><PageHero dark kicker="Ophthalmology" title={<>A clearer path to <span className="text-neon-teal">better vision.</span></>} copy="From routine eye examinations to specialist care, explore the ophthalmology services available at Hendge Hospital." image={eyeImage} imageAlt="Close-up of a human eye with a subtle scanning ring" /><section className="bg-pure-white py-16 sm:py-24"><div className="mx-auto grid max-w-[1280px] gap-10 px-5 sm:px-8 lg:grid-cols-[0.7fr_1.3fr] lg:px-12"><Reveal><SectionTitle kicker="Eye care services" title="Support for your vision." copy="Talk with our team about the care that may be right for you." /></Reveal><Reveal><ServiceList services={EYE_SERVICES} /></Reveal></div></section><section className="bg-ice py-14 sm:py-20"><div className="mx-auto grid max-w-[1100px] items-center gap-8 px-5 sm:px-8 md:grid-cols-2 lg:px-12"><div><Eyebrow>Ophthalmology at Hendge</Eyebrow><h2 className="font-display text-3xl leading-tight text-deep-navy">Care with an eye on the details.</h2><p className="mt-5 text-sm leading-7 text-secondary-text">Hendge Hospital has an in-house eye operation theatre and offers eye care services in Nanded. Get in touch with the hospital to ask about availability and next steps.</p></div><img src={operatingRoom.url} alt="Ophthalmology care at Hendge Hospital" loading="lazy" className="aspect-[1.3/1] w-full object-cover" /></div></section><AppointmentBand /></SiteShell>;
+  return <SiteShell darkHeader><PageHero dark kicker="Ophthalmology" title={<>A clearer path to <span className="text-neon-teal">better vision.</span></>} copy="From routine eye examinations to specialist care, explore the ophthalmology services available at Hendge Hospital." image={eyeImage} imageAlt="Close-up of a human eye with a subtle scanning ring" /><section className="bg-pure-white py-16 sm:py-24"><div className="mx-auto grid max-w-[1280px] gap-10 px-5 sm:px-8 lg:grid-cols-[0.7fr_1.3fr] lg:px-12"><Reveal><SectionTitle kicker="Eye care services" title="Support for your vision." copy="Talk with our team about the care that may be right for you." /></Reveal><Reveal><ServiceList services={EYE_SERVICES} /></Reveal></div></section><section className="bg-ice py-14 sm:py-20"><div className="mx-auto grid max-w-[1100px] items-center gap-8 px-5 sm:px-8 md:grid-cols-2 lg:px-12"><div><Eyebrow>Ophthalmology at Hendge</Eyebrow><h2 className="font-display text-3xl leading-tight text-deep-navy">Care with an eye on the details.</h2><p className="mt-5 text-sm leading-7 text-secondary-text">Hendge Hospital has an in-house eye operation theatre and offers eye care services in Nanded. Get in touch with the hospital to ask about availability and next steps.</p></div><img src={operatingRoom} alt="Ophthalmology care at Hendge Hospital" loading="lazy" className="aspect-[1.3/1] w-full object-cover" /></div></section><AppointmentBand /></SiteShell>;
 }
 
 export function DentalCarePage() {
@@ -315,7 +315,7 @@ export function DentalCarePage() {
 export function GalleryPage() {
   const localPhotos = useLocalHospitalGallery();
   const photos = [...localPhotos.map(({ src, alt, id }) => ({ src, alt, key: id })), ...originalGalleryPhotos.map((photo, index) => ({ ...photo, key: `hospital-${index}` }))];
-  return <SiteShell><PageHero kicker="Hospital gallery" title={<>A closer look at <span className="text-medical-blue/55">Hendge.</span></>} copy="Moments and images from the hospital and its work in the Nanded community." image={hospitalExterior.url} imageAlt="Hendge Hospital exterior in Nanded" /><section className="bg-pure-white py-14 sm:py-20"><div className="mx-auto max-w-[1280px] px-5 sm:px-8 lg:px-12"><div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{photos.map((photo, i) => <Reveal key={photo.key} delay={(i % 3) * 0.07}><figure className="group relative aspect-[1.15/1] overflow-hidden bg-ice"><img src={photo.src} alt={photo.alt} loading="lazy" className="size-full object-cover transition-transform duration-700 group-hover:scale-105" /><figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-deep-navy/85 via-deep-navy/30 to-transparent px-5 pb-5 pt-14 text-xs font-medium text-ice">{photo.alt}</figcaption></figure></Reveal>)}</div><p className="mt-8 text-xs text-secondary-text">Images shared by Hendge Hospital.</p></div></section><AppointmentBand /></SiteShell>;
+  return <SiteShell><PageHero kicker="Hospital gallery" title={<>A closer look at <span className="text-medical-blue/55">Hendge.</span></>} copy="Moments and images from the hospital and its work in the Nanded community." image={hospitalExterior} imageAlt="Hendge Hospital exterior in Nanded" /><section className="bg-pure-white py-14 sm:py-20"><div className="mx-auto max-w-[1280px] px-5 sm:px-8 lg:px-12"><div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{photos.map((photo, i) => <Reveal key={photo.key} delay={(i % 3) * 0.07}><figure className="group relative aspect-[1.15/1] overflow-hidden bg-ice"><img src={photo.src} alt={photo.alt} loading="lazy" className="size-full object-cover transition-transform duration-700 group-hover:scale-105" /><figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-deep-navy/85 via-deep-navy/30 to-transparent px-5 pb-5 pt-14 text-xs font-medium text-ice">{photo.alt}</figcaption></figure></Reveal>)}</div><p className="mt-8 text-xs text-secondary-text">Images shared by Hendge Hospital.</p></div></section><AppointmentBand /></SiteShell>;
 }
 
 export function GalleryManagerPage() {
